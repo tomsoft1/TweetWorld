@@ -5,7 +5,7 @@
 <script src="processing.js"></script>
 
 <style>
-body{margin:0px;width: 100%; font-family: "Helvetica Neue";}
+body{margin:0px;width: 100%; font-family: "Helvetica Neue";background-color: #000}
 #canvas-ps { width: 100%; }
 .test {color:#FFF;}
 .screen{position: absolute;top:0;left:0;height:100%;width: 100%}
@@ -100,6 +100,7 @@ function addPoint(tweet)
     var x=size*(180+coords[1]);
     var y=size*(90-coords[0]);
     processingInstance.point(x,y);
+    $("#g").height($("#canvas-ps").height());
     $("circle").attr("cx",180+coords[1]).attr("cy",90-coords[0]);
     total+=1;
     $("#newTweet").text("Total: "+total+"  iphone:"+iphone+"  android:"+android+" others:"+others);
