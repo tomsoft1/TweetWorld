@@ -41,13 +41,10 @@ Tweet
     <div id="last"></div>
 </div>
 
-
-
-
 <script>
 $.urlParam = function(name){
   try{
-    var results = new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
     return results[1] || 0;
   }catch(e){}
 }
@@ -58,17 +55,17 @@ $.urlParam = function(name){
      {text:'android', color:0x0000FF,total:0},
      {others:true,text:'others',color:0xFFFFFF,total:0}]};
 
- var config1={source:'bio_lang',patterns:[
-     {text:'en', color:0xFF0000,total:0},
-     {text:'fr', color:0x00FF00,total:0},
-     {text:'de', color:0x00FF0F,total:0},
-     {text:'ru', color:0x00FF0F,total:0},
-     {text:'es', color:0xFF00FF,total:0},
-     {text:'pt', color:0x00F0FF,total:0},
-     {text:'tr', color:0xF0F0FF,total:0},
-     {text:'ar', color:0xF0F00F,total:0},
-     {text:'ja', color:0x0000FF,total:0},
-     {others:true,text:'others',color:0xFF00FF,total:0}]};
+var colors=[0xFF0000,0x0000FF,0x00FF00,0x00FF0F,0xFF00FF,0x00F0FF];
+if(words=$.urlParam('words')){
+  config={source:$.urlParam('source'),patterns:[]};
+  words=JSON.parse(decodeURI(words));
+  for(var i=0;i<words.length;i++){
+    elem={text:words[i],total:0,color:colors[i%colors.length]};
+    if(words[i]=='others')elem['others']=true;
+    config.patterns.push(elem);
+  };
+  console.log(config);
+}
 
  function sketchProc(processing) {
   var bg;
@@ -95,7 +92,6 @@ $.urlParam = function(name){
  var processingInstance = new Processing(canvas, sketchProc);
 
 var hover_bubble=[];
-var showTweets=true;
 var socket=null;
 window.onload = function() {
   startSocket();
@@ -158,14 +154,7 @@ function addPoint(tweet)
   }
 }
 
-function toggleTweets()
-{
-  showTweets=!showTweets;
-  console.log(showTweets);
-}
-
 function updateSocket(){
-//  window.history.pushState("TweetOMap","TweetOMap","/?bounds=["+map.getBounds().toBBoxString()+"]");
   if(socket)socket.emit("recenter","-180,-90,180,90");
 }
 function startSocket(){
