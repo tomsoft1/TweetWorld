@@ -9,7 +9,7 @@ http = require('http'),
 server = http.createServer(app),
 Twit = require('twit'),
 io = require('socket.io').listen(server);
-
+console.log(process.env);
 server.listen(process.env.PORT ||8080);
 
 // routing
@@ -46,9 +46,16 @@ stream.on('tweet', function (tweet) {
         profile_image_url: tweet.user.profile_image_url,
       id_str:            tweet.user.id_str},
       geo:tweet.geo,
+      lang:tweet.lang,
+      bio_lang:tweet.user.lang,
       source:tweet.source
     };
-//    console.log(tweet.source);
+    if ( tweet.entities['media'] ) {
+      if ( tweet.entities['media'][0].type == "photo" ) {
+        smallTweet.mediaUrl = tweet.entities['media'][0].media_url;
+      }
+    }
+    //    console.log(tweet.source);
     var coords=tweet.geo.coordinates;
     clients.forEach(function(socket){
       var currentBounds=bounds_for_socket[socket.id];
