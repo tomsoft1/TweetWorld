@@ -1,5 +1,5 @@
 <html>
-<title>TweetOMap</title>
+<title>TweetWorld</title>
 <script src="/socket.io/socket.io.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="processing.js"></script>
@@ -36,7 +36,7 @@ Tweet
 </div>
 
 <div id="buttons">
-  <H3 id="newTweet" class='test'></H3>
+  <H3 id="info" class='test'></H3>
     <img id="thumbnail" width=100px></img>
     <div id="last"></div>
 </div>
@@ -50,22 +50,30 @@ $.urlParam = function(name){
 }
  var size=1024/360;
 
- var config={source:'source',patterns:[
-     {text:'iphone', color:0xFF0000,total:0},
-     {text:'android', color:0x0000FF,total:0},
-     {others:true,text:'others',color:0xFFFFFF,total:0}]};
-
-var colors=[0xFF0000,0x0000FF,0x00FF00,0xC0FFC0,0xFF00FF,0x00F0FF,0x00FFF0,0xF0F080,0x0FF080,0xC060];
-if(words=$.urlParam('words')){
-  config={source:$.urlParam('source'),patterns:[]};
-  words=JSON.parse(decodeURI(words));
-  for(var i=0;i<words.length;i++){
-    elem={text:words[i],total:0,color:colors[i%colors.length]};
-    if(words[i]=='others')elem['others']=true;
-    config.patterns.push(elem);
-  };
-  console.log(config);
+function hex_to_rgb(input) {
+  var res=input.toString(16);
+  return "#"+(res.length >= 6 ? res : new Array(6 - res.length + 1).join(0) + res);
 }
+ var colors=[0xFF0000,0x1000FF,0x10FF00,0xFFF70A,0xFF00FF,0x00F0FF,0xFF6026,0xB9FF96,0x0FF080,0x0A646E];
+ words=$.urlParam('words')||"[\"iphone\",\"android\",\"others\"]";
+ config={source:$.urlParam('source')||'source',
+   rays:  $.urlParam('rays')||4,
+   size:  $.urlParam('size')||4,
+   effect:$.urlParam('effect')||'lines',
+ patterns:[]};
+ words=JSON.parse(decodeURI(words));
+ for(var i=0;i<words.length;i++){
+   elem={text:words[i],total:0,color:colors[i%colors.length]};
+   if(words[i]=='others')elem['others']=true;
+   config.patterns.push(elem);
+    new_elem=$("<div>"+words[i]+":<span id='count_"+words[i]+"'></span></div>");
+   console.log(elem);
+   new_elem.css("color",hex_to_rgb(elem.color));
+   console.log(elem.color);
+   $("#info").append(new_elem);
+ };
+ console.log(config);
+
 
  function sketchProc(processing) {
   var bg;
@@ -131,24 +139,35 @@ function addPoint(tweet)
       processingInstance.stroke(col+0x80000000);
       processingInstance.point(x,y);
       processingInstance.stroke(col+0x04000000);
-      for(var idx=0;idx<4;idx++){
-        var angle=Math.random()*Math.PI*2;
-        var dir=2+4*Math.random();
-        //console.log(angle+" "+dir);
-        processingInstance.line(x,y,x+Math.sin(angle)*dir,y+Math.cos(angle)*dir);
-      }
-      $("#g").height($("#canvas-ps").height());
+      switch(config.effect){
+        case 'lines':
+          for(var idx=0;idx<config.rays;idx++){
+            var angle=Math.random()*Math.PI*2;
+            var dir=2+config.size*Math.random();
+            //console.log(angle+" "+dir);
+            processingInstance.line(x,y,x+Math.sin(angle)*dir,y+Math.cos(angle)*dir);
+          }
+          break;
+          case 'points':
+            for(var idx=0;idx<config.rays;idx++){
+              var angle=Math.random()*Math.PI*2;
+              var dir=2+config.size*Math.random();
+              //console.log(angle+" "+dir);
+              processingInstance.point(x+Math.sin(angle)*dir,y+Math.cos(angle)*dir);
+            }
+            break;
+            default:
+          }
+          $("#g").height($("#canvas-ps").height());
       $("circle").attr("cx",180+coords[1]).attr("cy",90-coords[0]);
       total+=1;
 
-      var toDisplay="total:"+total;
       config.patterns.forEach(function(aPattern)
       {
-        toDisplay+=" "+aPattern.text+" "+aPattern.total;
+        $("#count_"+aPattern.text).text(aPattern.total);
       });
      // $("#thumbnail").attr("src",tweet.mediaUrl);
     //  $("#last").text(tweet.text);
-      $("#newTweet").text(toDisplay);
     }
   }
 }
