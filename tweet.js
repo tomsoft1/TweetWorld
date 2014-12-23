@@ -15,7 +15,7 @@ server.listen(process.env.PORT ||8080);
 // routing
 app.get('/', function (req, res) {
   console.log(req.headers);
-  res.sendfile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/index.html');
 });
 app.use(express.static(__dirname + '/public'));
 
@@ -64,7 +64,7 @@ stream.on('tweet', function (tweet) {
                       &&(coords[1]<currentBounds[2])&&(coords[0]<currentBounds[3])){
 
         totalSent+=1;
-        if(totalSent%100==0)console.log("Sent:"+totalSent);
+        if(totalSent%1000==0)console.log("Sent:"+totalSent);
 
         socket.emit('stream',smallTweet);
       }
