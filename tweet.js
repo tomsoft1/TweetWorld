@@ -22,6 +22,7 @@ app.use(express.static(__dirname + '/public'));
 var world = [ '-180', '-90', '180', '90' ];
 var total=0;
 var totalSent=0;
+var max=0;
 
 var T = new Twit({  // You need to setup your own twitter configuration here!
   consumer_key:    process.env.CONSUMER_KEY,
@@ -92,6 +93,7 @@ io.sockets.on('connection', function (socket) {
   clients.push(socket); // Update the list of connected clients
   currentBounds=world;
   bounds_for_socket[socket.id]=currentBounds;
-  console.log('Connected, total:'+clients.length+' ('+Object.keys(bounds_for_socket).length+')');
+  if(clients.length>max)max=clients.length;
+  console.log('Connected, total:'+clients.length+' ('+Object.keys(bounds_for_socket).length+') max:'+max);
 });
 ;
