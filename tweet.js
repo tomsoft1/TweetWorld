@@ -8,7 +8,7 @@ app = express(),
 http = require('http'),
 server = http.createServer(app),
 Twit = require('twit'),
-io = require('socket.io').listen(server);
+io = require('socket.io')().listen(server);
 console.log(process.env);
 server.listen(process.env.PORT ||8080);
 

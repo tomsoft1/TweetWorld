@@ -12,6 +12,6 @@
     "start": "node tweet.js"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "14.17.x"
   }
 }
