@@ -1,6 +1,6 @@
 {
   "name": "TweetMap",
-  "version": "1.0.0-6",
+  "version": "1.0.1",
   "dependencies": {
     "dotenv": "^8.0.0",
     "express": ">=2.1.0",
@@ -13,6 +13,6 @@
     "start": "node tweet.js"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "14.17.x"
   }
 }
