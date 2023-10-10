@@ -3,13 +3,14 @@
 // in real time using a socket
 // http://blog.landspurg.net
 //
+require('dotenv').config();
 var express = require('express'),
 app = express(),
 http = require('http'),
 server = http.createServer(app),
 Twit = require('twit'),
 io = require('socket.io').listen(server);
-console.log(process.env);
+//console.log(process.env);
 server.listen(process.env.PORT ||8080);
 
 // routing
@@ -56,7 +57,7 @@ stream.on('tweet', function (tweet) {
         smallTweet.mediaUrl = tweet.entities['media'][0].media_url;
       }
     }
-    //    console.log(tweet.source);
+        console.log(tweet);
     var coords=tweet.geo.coordinates;
     clients.forEach(function(socket){
       var currentBounds=bounds_for_socket[socket.id];

@@ -107,6 +107,7 @@ window.onload = function() {
 var total=iphone=others=android=0;
 function addPoint(tweet)
 {
+  console.log(tweet);
   if(tweet.geo){
     var coords=tweet.geo.coordinates;
     var toCheck=tweet[config.source];
@@ -120,7 +121,7 @@ function addPoint(tweet)
         if(regexp.test(toCheck)){
           aPattern.total+=1;
           col=aPattern.color;
-          //console.log("Found:"+aPattern.text);
+          console.log("Found:"+aPattern.text);
           found=1;
         }
       }else{
